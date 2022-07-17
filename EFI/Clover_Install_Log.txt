@@ -1,0 +1,40 @@
+
+Clover EFI installer log - Thu Oct 25 19:53:32 MYT 2018
+Installer version: v2.4k r4700 EFI bootloader
+======================================================
+/dev/disk0 (external, physical):
+   #:                       TYPE NAME                    SIZE       IDENTIFIER
+   0:      GUID_partition_scheme                        *31.3 GB    disk0
+   1:                        EFI EFI                     209.7 MB   disk0s1
+   2:                  Apple_HFS MACUSB                  30.9 GB    disk0s2
+/dev/disk1 (external, physical):
+   #:                       TYPE NAME                    SIZE       IDENTIFIER
+   0:      GUID_partition_scheme                        *42.9 GB    disk1
+   1:                        EFI EFI                     209.7 MB   disk1s1
+   2:                  Apple_HFS VM 10.11                42.1 GB    disk1s2
+   3:                 Apple_Boot Recovery HD             650.0 MB   disk1s3
+======================================================
+Backing up EFI files
+
+No Active Partition
+
+Stage 0 - Writing boot0af to /dev/rdisk0
+dd if=/dev/rdisk0 count=1 bs=512 of=/tmp/origMBR
+cp /tmp/origMBR /tmp/newMBR
+dd if=/Volumes/MACUSB/usr/standalone/i386/boot0af of=/tmp/newMBR bs=440 count=1 conv=notrunc
+fdisk -f /tmp/newMBR -u -y /dev/rdisk0
+
+Stage 1 - Writing boot1f32 to /dev/rdisk0s1
+dd if=/dev/rdisk0s1 count=1 bs=512 of=/tmp/origbs
+boot volume format is FAT32
+cp /tmp/boot1f32 /tmp/newbs
+dd if=/tmp/origbs of=/tmp/newbs skip=3 seek=3 bs=1 count=87 conv=notrunc
+dd if=/tmp/newbs of=/dev/rdisk0s1
+
+Stage 2 - Written boot6 (x64) to /Volumes/ESP/boot
+
+Theme 'metal' (defined in config.plist) not found !
+Using default theme 'embedded'
+======================================================
+=========== Clover EFI Installation Finish ===========
+======================================================
